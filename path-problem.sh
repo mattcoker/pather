@@ -1,6 +1,6 @@
 # !/bin/sh
 function pather() {
-	ruby pather.rb $1 $2
+	./pather $1 $2
 }
 
 cat <<PROB

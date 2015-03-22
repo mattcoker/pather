@@ -1,5 +1,4 @@
 #!/usr/bin/ruby
-
 def find_targets(grid)
 	targets = []
 	grid.each_with_index do |string, index|
@@ -83,6 +82,7 @@ def pather(input_name, output_name)
 	grid = trace_path_points(path_points, grid)
 
 	# Print final output to file
-	File.open(output_name.to_s, 'w') { |f| f.puts grid }
-
+	File.open(output_name, 'w') { |f| f.puts grid }
 end
+
+pather(ARGV[0], ARGV[1])
