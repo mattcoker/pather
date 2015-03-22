@@ -1,0 +1,88 @@
+#!/usr/bin/ruby
+
+def find_targets(grid)
+	targets = []
+	grid.each_with_index do |string, index|
+		if string.include?("#")
+			row_instances = (0 ... string.length).find_all { |i| string[i] == '#' }
+			row_instances.each do |value|
+				target = [index, value]
+				targets.push(target)
+			end
+		end
+	end
+	return targets
+end
+
+def generate_path_points(targets)
+	path_points = []
+	start_target = 1;
+
+	while targets[start_target]
+		current_point = targets[start_target-1]
+		end_point = targets[start_target]
+
+		∆_y = end_point[0] - current_point[0]
+		∆_x = end_point[1] - current_point[1]
+
+		until current_point == end_point
+			# Move Vertical First
+			while ∆_y != 0
+				if ∆_y > 0
+					current_point[0] += 1
+					path_points.push(current_point.dup)
+					∆_y -= 1
+				else
+					current_point[0] -= 1
+					path_points.push(current_point.dup)
+					∆_y += 1
+				end
+			end
+
+			# Move Horizontal Last
+			while ∆_x != 0
+				if ∆_x > 0
+					current_point[1] += 1
+					path_points.push(current_point.dup)
+					∆_x -= 1
+				else
+					current_point[1] -= 1
+					path_points.push(current_point.dup)
+					∆_x += 1
+				end
+			end
+		end
+
+		start_target += 1
+	end
+
+	path_points = eliminate_overlap(path_points, targets)
+end
+
+def eliminate_overlap(path_points, targets)
+	path_points -= targets
+end
+
+def trace_path_points(path_points, grid)
+	path_points.each { |point| grid[point[0]][point[1]] = "*" }
+ 	return grid
+end
+
+def pather(input_name, output_name)
+
+	# Convert file into array of lines for Y coordinate system
+	grid = File.readlines(input_name)
+
+	# Generate array of coordinates for targets (# characters)
+	targets = find_targets(grid)
+
+	# Generate array of coordinates of the followed path between targets
+	path_points = generate_path_points(targets)
+
+	# Render the traced paths
+	grid = trace_path_points(path_points, grid)
+
+	# Print final output to file
+	File.open(output_name.to_s, 'w') { |f| f.puts grid }
+
+end
